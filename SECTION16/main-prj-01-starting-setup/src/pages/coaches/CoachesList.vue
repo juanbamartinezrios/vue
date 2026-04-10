@@ -1,14 +1,22 @@
 <template>
+  <base-dialog :show="!!error" title="An error occurred." @close="handleError">
+    <p>{{ error }}</p>
+  </base-dialog>
   <section>
     <coach-filter @change-filter="setFilters"></coach-filter>
   </section>
   <section>
     <base-card>
       <div class="controls">
-        <base-button mode="outline">Refresh</base-button>
-        <base-button to="/register" link v-if="!isCoach">Register a coach</base-button>
+        <base-button mode="outline" @click="loadCoaches(true)">Refresh</base-button>
+        <base-button to="/register" link v-if="!isCoach && !isLoading"
+          >Register a coach</base-button
+        >
       </div>
-      <ul v-if="hasCoaches">
+      <div v-if="isLoading">
+        <base-spinner></base-spinner>
+      </div>
+      <ul v-else-if="hasCoaches">
         <coach-item
           v-for="coach in filteredCoaches"
           :key="coach.id"
@@ -35,6 +43,8 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
+      error: null,
       activeFilters: {
         frontend: true,
         backend: true,
@@ -59,7 +69,7 @@ export default {
       });
     },
     hasCoaches() {
-      return this.$store.getters['coaches/hasCoaches'];
+      return this.$store.getters['coaches/hasCoaches'] && !this.isLoading;
     },
     isCoach() {
       return this.$store.getters['coaches/isCoach'];
@@ -69,6 +79,30 @@ export default {
     setFilters(updatedFilters) {
       this.activeFilters = updatedFilters;
     },
+    async loadCoaches(force = false) {
+      /*
+      await this.$store.dispatch('coaches/loadCoaches') dispatches a Vuex action named coaches/loadCoaches 
+      and waits for its Promise to resolve. Using await ensures the component pauses here until the action 
+      completes (or rejects). The action should return a Promise and perform the network/fetch logic or 
+      other side effects.
+      this.isLoading = false clears the loading flag after the action resolves, restoring normal UI state.
+      */
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch('coaches/loadCoaches', {
+          forceRefresh: force,
+        });
+      } catch (error) {
+        this.error = error.message || 'Something went wrong.';
+      }
+      this.isLoading = false;
+    },
+    handleError() {
+      this.error = null;
+    },
+  },
+  created() {
+    this.loadCoaches();
   },
 };
 </script>

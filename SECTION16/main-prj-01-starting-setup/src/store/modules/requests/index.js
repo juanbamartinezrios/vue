@@ -3,10 +3,10 @@ import actions from './actions.js';
 import getters from './getters.js';
 
 export default {
-    namespace: true,
+    namespaced: true,
     state() {
         return {
-
+            requests: []
         }
     },
     mutations: mutations,
