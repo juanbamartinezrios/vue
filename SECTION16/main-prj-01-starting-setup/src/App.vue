@@ -1,27 +1,42 @@
 <template>
-    <the-header></the-header>
-    <router-view></router-view>
+  <the-header></the-header>
+  <router-view></router-view>
 </template>
 
 <script>
 import TheHeader from './components/layout/TheHeader.vue';
 
 export default {
-    components: {
-        TheHeader
-    }
-}
+  components: {
+    TheHeader,
+  },
+  computed: {
+    didAutoLogout() {
+      return this.$store.getters.disAutoLogout;
+    },
+  },
+  created() {
+    this.$store.dispatch('tryLogin');
+  },
+  watch: {
+    disAutoLogout(curValue, oldValue) {
+      if (curValue && curValue !== oldValue) {
+        this.$router.replace('/coaches');
+      }
+    },
+  },
+};
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {

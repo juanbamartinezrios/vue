@@ -3,6 +3,8 @@ import axios from 'axios';
 export default {
   async registerCoach(context, data) {
     const userId = context.rootGetters.userId;
+    const token = context.rootGetters.token;
+
     const coachData = {
       id: context.rootGetters.userId,
       firstName: data.first,
@@ -13,7 +15,7 @@ export default {
     };
 
     const response = await axios.put(
-      `https://vue-complete-guide-ff3ef-default-rtdb.firebaseio.com/coaches/${userId}.json`,
+      `https://vue-complete-guide-ff3ef-default-rtdb.firebaseio.com/coaches/${userId}.json?auth=${token}`,
       coachData
     );
 

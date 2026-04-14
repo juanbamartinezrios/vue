@@ -28,9 +28,10 @@ export default {
   },
   async loadRequests(context) {
     const coachId = context.rootGetters.userId;
+    const token = context.rootGetters.token;
 
     const response = await axios.get(
-      `https://vue-complete-guide-ff3ef-default-rtdb.firebaseio.com/requests/${coachId}.json`
+      `https://vue-complete-guide-ff3ef-default-rtdb.firebaseio.com/requests/${coachId}.json?auth=${token}`
     );
 
     const responseData = await response.data;
